@@ -20,3 +20,5 @@ cfd_rayon/.DS_Store
 cfd_rayon/target/debug/
 
 cfd_rayon/target/release/
+
+cfd/target
