@@ -72,17 +72,9 @@ fn main() {
     let start = Instant::now();
 
     for _k in 1..niter+1 {
-
-        //println!("psi before: {}", psi);
+        
         jacobistep(&mut psi_temp, &psi, mdim, ndim);
-        //println!("psi_temp: {}", psi_temp);
 
-
-//        for i in 1..m_u+1 {
-//            for j in 1..n_u+1 {
-//                psi[[i,j]] = psi_temp[[i,j]];
-//            }
-//        }
         psi.outer_iter_mut().into_par_iter().enumerate().for_each(|(i, mut view)| {
             if (1..m_u+1).contains(&i) {
                 for j in 1..n_u+1 {
@@ -106,8 +98,6 @@ fn main() {
 
     writedatafiles(&psi, &m, &n, &scalefactor);
 
-
-
 }
 
 fn jacobistep<'a>(psi_temp: &'a mut Array2<f64>, psi: &Array2<f64>, m:usize, n:usize) -> &'a Array2<f64> {
@@ -120,28 +110,3 @@ fn jacobistep<'a>(psi_temp: &'a mut Array2<f64>, psi: &Array2<f64>, m:usize, n:u
     });
     psi_temp
 }
-
-//fn jacobistep<'a>(psi_temp: &'a mut Array2<f64>, psi: &Array2<f64>, m:usize, n:usize) -> &'a Array2<f64> {
-//    iproduct!(1..=m, 1..=n).par_bridge().map(|(i,j)| {
-//        psi_temp[[i,j]] = 0.25*(psi[[i-1,j]] + psi[[i+1,j]] + psi[[i,j-1]] + psi[[i,j+1]])
-//    })
-//}
-
-//fn jacobistep<'a>(psi_temp: &'a mut Array2<f64>, psi: & Array2<f64>, m:usize, n:usize) -> &'a Array2<f64>{
-//    for i in 1..m-1 {
-//        //let j_u: usize = j as usize;
-//        for j in 1..n-1 {
-//            //let i_u: usize = i as usize;
-//            psi_temp[[i,j]] = 0.25*(psi[[i-1,j]]+psi[[i+1,j]]+psi[[i,j-1]]+psi[[i,j+1]]);
-//        }
-//    }
-//    psi_temp
-//}
-
-//    let row_major = psi_temp.iter().enumerate();
-//    for elem in row_major {
-//        println!("elem! {:?}", elem);
-        //psi_temp[elem] = 0.25*psi[elem-1];
-//    }
-//    psi_temp
-    //println!("row_major: {:?}", row_major)
