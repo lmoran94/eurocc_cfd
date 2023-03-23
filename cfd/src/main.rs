@@ -107,12 +107,4 @@ fn jacobistep<'a>(psi_temp: &'a mut Array2<f64>, psi: & Array2<f64>, m:usize, n:
         }
     }
     psi_temp
-
-//    let row_major = psi_temp.iter().enumerate();
-//    for elem in row_major {
-//        println!("elem! {:?}", elem);
-        //psi_temp[elem] = 0.25*psi[elem-1];
-//    }
-//    psi_temp
-    //println!("row_major: {:?}", row_major)
 }
