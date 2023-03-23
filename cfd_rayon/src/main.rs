@@ -4,6 +4,8 @@ use ndarray::Array2;
 use std::time::{Instant, Duration};
 mod cfdio;
 use crate::cfdio::writedatafiles;
+use rayon::prelude::*;
+use itertools::{iproduct, Itertools};
 
 fn main() {
     //simulation sizes
@@ -33,7 +35,7 @@ fn main() {
     let n: i64 = nbase*scalefactor;
     let re = re / (scalefactor as f64);
 
-    println!("Running CFD on {} x {} grid in serial", m, n);
+    println!("Running CFD on {} x {} grid in parallel", m, n);
 
     let mdim: usize = (m + 2) as usize;
     let ndim: usize = (n + 2) as usize;
@@ -70,15 +72,17 @@ fn main() {
     let start = Instant::now();
 
     for _k in 1..niter+1 {
-
+        
         jacobistep(&mut psi_temp, &psi, mdim, ndim);
 
-
-        for i in 1..m_u+1 {
-            for j in 1..n_u+1 {
-                psi[[i,j]] = psi_temp[[i,j]];
+        psi.outer_iter_mut().into_par_iter().enumerate().for_each(|(i, mut view)| {
+            if (1..m_u+1).contains(&i) {
+                for j in 1..n_u+1 {
+                    view[j] = psi_temp[[i,j]]
+                }
             }
-        }
+        });
+        //println!("psi: {}", psi);
         if _k%1000==0{
             println!("Completed iteration {}", _k);
         }
@@ -94,17 +98,15 @@ fn main() {
 
     writedatafiles(&psi, &m, &n, &scalefactor);
 
-
-
 }
 
-fn jacobistep<'a>(psi_temp: &'a mut Array2<f64>, psi: & Array2<f64>, m:usize, n:usize) -> &'a Array2<f64>{
-    for i in 1..m-1 {
-        //let j_u: usize = j as usize;
-        for j in 1..n-1 {
-            //let i_u: usize = i as usize;
-            psi_temp[[i,j]] = 0.25*(psi[[i-1,j]]+psi[[i+1,j]]+psi[[i,j-1]]+psi[[i,j+1]]);
+fn jacobistep<'a>(psi_temp: &'a mut Array2<f64>, psi: &Array2<f64>, m:usize, n:usize) -> &'a Array2<f64> {
+    psi_temp.outer_iter_mut().into_par_iter().enumerate().for_each(|(i, mut view)| {
+        if (1..m-1).contains(&i) {
+            for j in 1..n-1 {
+                view[j] = 0.25*(psi[[i-1,j]] + psi[[i+1,j]] + psi[[i,j-1]] + psi[[i,j+1]]);
+            }
         }
-    }
+    });
     psi_temp
 }
