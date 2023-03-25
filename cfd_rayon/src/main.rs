@@ -5,7 +5,6 @@ use std::time::{Instant, Duration};
 mod cfdio;
 use crate::cfdio::writedatafiles;
 use rayon::prelude::*;
-use itertools::{iproduct, Itertools};
 
 fn main() {
     //simulation sizes
