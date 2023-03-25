@@ -1,8 +1,4 @@
 
-*.lock
-
-*.toml
-
 *.plt
 
 *.py
@@ -17,8 +13,6 @@ cfd_rayon/.DS_Store
 
 *.TAG
 
-cfd_rayon/target/debug/
-
-cfd_rayon/target/release/
+cfd_rayon/target/
 
 cfd/target/
