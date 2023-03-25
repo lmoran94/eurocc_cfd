@@ -72,13 +72,8 @@ fn main() {
     for _k in 1..niter+1 {
 
         jacobistep(&mut psi_temp, &psi, mdim, ndim);
+        std::mem::swap(&mut psi_temp, &mut psi);
 
-
-        for i in 1..m_u+1 {
-            for j in 1..n_u+1 {
-                psi[[i,j]] = psi_temp[[i,j]];
-            }
-        }
         if _k%1000==0{
             println!("Completed iteration {}", _k);
         }
