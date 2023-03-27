@@ -1,7 +1,4 @@
 
-*.lock
-
-*.toml
 
 *.plt
 
