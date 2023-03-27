@@ -74,14 +74,8 @@ fn main() {
     for _k in 1..niter+1 {
         
         jacobistep(&mut psi_temp, &psi, mdim, ndim);
+        std::mem::swap(&mut psi_temp, &mut psi);
 
-        psi.outer_iter_mut().into_par_iter().enumerate().for_each(|(i, mut view)| {
-            if (1..m_u+1).contains(&i) {
-                for j in 1..n_u+1 {
-                    view[j] = psi_temp[[i,j]]
-                }
-            }
-        });
         //println!("psi: {}", psi);
         if _k%1000==0{
             println!("Completed iteration {}", _k);
